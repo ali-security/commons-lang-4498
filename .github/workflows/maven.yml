@@ -5,7 +5,7 @@
 # (the "License"); you may not use this file except in compliance with
 # the License.  You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,16 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-language: java
-sudo: false
+name: Java CI
 
-jdk:
-  - openjdk6
-  - openjdk7
-  - oraclejdk8
+on: 
+  push:
+      branches:
+         - '**' # Listens to all branches
 
-before_install:
-  - export JAVA_HOME=$(/usr/libexec/java_home)
+jobs:
+  build:
 
-after_success:
-  - mvn clean
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [8]
+        
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ matrix.java }}
+    - name: Build with Maven
+      run: mvn -V package --file pom.xml
